@@ -7,12 +7,16 @@ const cors = require('cors');
 
 
 const { dbConnetion } = require('./database/config');
+const { use } = require('./routes/usuarios');
 
 //Crear el servidor de express
 const app = express();
 
 // Configurar cors
 app.use(cors());
+
+// Middleware: LEctura y parsep del body
+app.use( express.json());
 
 
 //base de datos
@@ -21,14 +25,8 @@ dbConnetion();
 //Visualizar todas las variables de entorno que estan corriendo: console.log(process.env);
 
 //Rutas
-//request(req): es lo que se solicita(informacion de los headers, que cliente fue, etc)
-//respone(res): es lo que nosostros o nuestro servidor va a respoderle al cliente lo que acaba de solicitar en nuestro backend
-app.get('/', (req, res) => {
-    res.json({
-        ok: true,
-        msh:'Hola mundo'
-    })
-});
+app.use( '/api/usuarios', require('./routes/usuarios'));
+app.use( '/api/login', require('./routes/auth'));
 
 /*  MongoDB
     Usuario: mean_user
