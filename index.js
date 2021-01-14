@@ -21,6 +21,9 @@ app.use( express.json());
 //base de datos
 dbConnetion();
 
+//Directorio public
+app.use(express.static('public'));
+
 //Visualizar todas las variables de entorno que estan corriendo: console.log(process.env);
 
 //Rutas
