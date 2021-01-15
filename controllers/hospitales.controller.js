@@ -1,4 +1,4 @@
-const { response } = require('express');
+const { response, json } = require('express');
 const bcrypt = require('bcryptjs') // para instalar: npm i bcryptjs
 
 const Hospital = require('../models/hospital');
@@ -56,12 +56,79 @@ const crearHospital = async (req, res = response) => {
 
 const actualizarHospital = async (req, res = response) => {
 
+    const id = req.params.id;
+    const __id = req.__id;
+
+    try {
+
+        const hospital = await Hospital.findById( id );
+
+        if ( !hospital ) {
+
+            return res.status(400).json({
+                ok: true,
+                msg: 'Hspital no encontrado por id'
+            });
         
+        }
+        
+        /* Primera forma para hacer la actualizacion
+        hospital.nombre = req.body.nombre;
+        */
+
+        // segunda forma
+        const cambiosHospital = {
+            ...req.body,
+            usuario: __id
+        }
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate( id, cambiosHospital, { new: true});
+
+        res.json({
+            ok: true,
+            hospital: hospitalActualizado
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrados'
+        });
+    }        
 }
 
 const borrarHospital = async (req, res = response) => {
     
-   
+    const id = req.params.id;
+
+    try {
+
+        const hospital = await Hospital.findById( id );
+
+        if ( !hospital ) {
+
+            return res.status(400).json({
+                ok: true,
+                msg: 'Hospital no encontrado por id'
+            });
+        
+        }
+        
+        await Hospital.findByIdAndDelete( id );
+
+        res.json({
+            ok: true,
+            hospital: 'Hospital eliminado'
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrados'
+        });
+    }
+
 } 
 
 module.exports = {
